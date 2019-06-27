@@ -4,24 +4,38 @@ import './App.css'
 
 class App extends Component {
 state = {
-    products: []
+    products: [],
+    page: 1,
+    size: 8,
+    length: 0
   };
 
   componentDidMount() {
-    this.callBackendAPI(1,8)
-      .then(res => this.setState({ products: res.products }))
-      .catch(err => console.log(err));
+    this.callBackendAPI(this.state.page, this.state.size)
   }
 
   callBackendAPI = async (n, m) => {
-    const query = (n || m) ? `?page=${n}&size=${m}` : ""
-    const response = await fetch(`/api/products${query}`);
-    const body = await response.json();
-    if (response.status !== 200) {
-      throw Error(body.message) 
+    try {
+      const query = (n || m) ? `?page=${n}&size=${m}` : ""
+      const response = await fetch(`/api/products${query}`);
+      const body = await response.json();
+      if (response.status !== 200) {
+        throw Error(body.message)
+      }
+      this.setState({ 
+        page: this.state.page+1,
+        length: body.length,
+        products: [...this.state.products, ...body.products ]
+      })
+    } catch (err) {
+      console.log(err)
     }
-    return body;
   };
+
+  onMore = () => {
+    this.callBackendAPI(this.state.page, this.state.size)
+
+  }
 
   render() {
     return (
@@ -31,6 +45,14 @@ state = {
             return <Product key={product.title} {...product} />
           })}
          </div>
+
+          {
+            this.state.products.length === this.state.length 
+            ? null
+            : <button onClick={this.onMore}>
+                SHOW MORE
+              </button>
+          }
       </div>
     );
   }
