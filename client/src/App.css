@@ -44,7 +44,6 @@ button {
     width: 200px;
     height: 50px;
     font-size: 16px;
-    /* background-color: rgb(255, 255, 255); */
 }
 
 @media screen and (max-width: 1024px) {

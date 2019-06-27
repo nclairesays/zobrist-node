@@ -11,17 +11,14 @@ app.get('/api/products', (req, res) => {
     const {products} = dataSource
 
     if (page || size ) {
-        res.send({ 
+        res.send({
             products:queried(products, parseInt(page), parseInt(size)),
             length: products.length
-         })
-        
+        })
     } else  {
         console.log('SEND ALL')
         res.send({ products })
-        
     }
-
 });
 
 const queried = (arr, page, size) => {
