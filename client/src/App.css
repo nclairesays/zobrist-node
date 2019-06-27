@@ -1,5 +1,8 @@
 .app {
     width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .all-products {
     align-items: center;
@@ -11,7 +14,7 @@
 
 .product-container {
     align-items: center;
-    background-color: lightblue;
+    background-color: rgb(171, 253, 182);
     border: 1px solid #ffffff;
     display: flex;
     flex-direction: column;
@@ -23,7 +26,7 @@ img {
     height: 200px;
     width: 100%;
     border: 1px solid #ffffff;
-    background-color: lightcyan;
+    background-color: rgb(228, 255, 233);
 }
 
 h2 {
@@ -35,16 +38,24 @@ p {
     font-size: 18px;
     line-height:  0;
 }
- 
-@media (max-width: 1024px) {
+
+button {
+    margin: 20px 0;
+    width: 200px;
+    height: 50px;
+    font-size: 16px;
+    /* background-color: rgb(255, 255, 255); */
+}
+
+@media screen and (max-width: 1024px) {
     .all-products {
-        grid-template-columns: 1fr 1fr 1fr;	
+        grid-template-columns: 1fr 1fr 1fr;
     }
 }
 
-@media (max-width: 640px) {
+@media screen and (max-width: 640px) {
     .all-products {
-        grid-template-columns: 1fr 1fr ;	
+        grid-template-columns: 1fr 1fr ;
     }
 }
 
