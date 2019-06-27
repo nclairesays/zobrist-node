@@ -1,34 +1,83 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Product from './Product';
+import './App.css'
 
 class App extends Component {
 state = {
-    data: null
+    products: [],
+    page: 1,
+    size: 8,
+    length: 0
   };
 
   componentDidMount() {
-      // Call our fetch function below once the component mounts
-    this.callBackendAPI()
-      .then(res => this.setState({ data: res.express }))
-      .catch(err => console.log(err));
+    this.callBackendAPI(this.state.page, this.state.size)
+    // if called with no arguments/queries, then it will return all products:
+    // this.callBackendAPI()
   }
-    // Fetches our GET route from the Express server. (Note the route we are fetching matches the GET route from server.js
-  callBackendAPI = async () => {
-    const response = await fetch('/express_backend');
-    const body = await response.json();
 
-    if (response.status !== 200) {
-      throw Error(body.message) 
+  callBackendAPI = async (n, m) => {
+    try {
+      if (n || m ) {
+        const query = (n || m) ? `?page=${n}&size=${m}` : ""
+        const response = await fetch(`/api/products${query}`);
+        const body = await response.json();
+        if (response.status !== 200) {
+          throw Error(body.message)
+        }
+        this.setState({ 
+          page: this.state.page+1,
+          length: body.length,
+          products: [...this.state.products, ...body.products ]
+        })
+      } else {
+        const response = await fetch(`/api/products`);
+        const body = await response.json();
+        if (response.status !== 200) {
+          throw Error(body.message)
+        }
+        this.setState({ 
+          page: 1,
+          length: body.length,
+          products: body.products
+        })
+      }
+
+    } catch (err) {
+      console.log(err)
     }
-    return body;
   };
+
+  onMore = () => {
+    this.callBackendAPI(this.state.page, this.state.size)
+  }
+  
+  showAll = () => {
+    console.log("SHOW ALL?")
+    this.callBackendAPI()
+  }
 
   render() {
     return (
-      <div className="App">
-        {/* Render the newly fetched data inside of this.state.data  */}
-        <p className="App-intro">{this.state.data}</p>
+      <div className="app">
+        <div className="all-products">
+          {this.state.products.map ( product => {
+            return <Product key={product.title} {...product} />
+          })}
+        </div>
+
+          {
+            this.state.products.length === this.state.length
+            ? null
+            : <>
+                <button onClick={this.onMore}>
+                  SHOW MORE
+                </button>
+                <button onClick={this.showAll}>
+                  SHOW ALL
+                </button>
+              </>
+          }
       </div>
     );
   }
