@@ -12,21 +12,37 @@ state = {
 
   componentDidMount() {
     this.callBackendAPI(this.state.page, this.state.size)
+    // if called with no arguments/queries, then it will return all products:
+    // this.callBackendAPI()
   }
 
   callBackendAPI = async (n, m) => {
     try {
-      const query = (n || m) ? `?page=${n}&size=${m}` : ""
-      const response = await fetch(`/api/products${query}`);
-      const body = await response.json();
-      if (response.status !== 200) {
-        throw Error(body.message)
+      if (n || m ) {
+        const query = (n || m) ? `?page=${n}&size=${m}` : ""
+        const response = await fetch(`/api/products${query}`);
+        const body = await response.json();
+        if (response.status !== 200) {
+          throw Error(body.message)
+        }
+        this.setState({ 
+          page: this.state.page+1,
+          length: body.length,
+          products: [...this.state.products, ...body.products ]
+        })
+      } else {
+        const response = await fetch(`/api/products`);
+        const body = await response.json();
+        if (response.status !== 200) {
+          throw Error(body.message)
+        }
+        this.setState({ 
+          page: 1,
+          length: body.length,
+          products: body.products
+        })
       }
-      this.setState({ 
-        page: this.state.page+1,
-        length: body.length,
-        products: [...this.state.products, ...body.products ]
-      })
+
     } catch (err) {
       console.log(err)
     }
@@ -34,7 +50,11 @@ state = {
 
   onMore = () => {
     this.callBackendAPI(this.state.page, this.state.size)
-
+  }
+  
+  showAll = () => {
+    console.log("SHOW ALL?")
+    this.callBackendAPI()
   }
 
   render() {
@@ -44,14 +64,19 @@ state = {
           {this.state.products.map ( product => {
             return <Product key={product.title} {...product} />
           })}
-         </div>
+        </div>
 
           {
-            this.state.products.length === this.state.length 
+            this.state.products.length === this.state.length
             ? null
-            : <button onClick={this.onMore}>
-                SHOW MORE
-              </button>
+            : <>
+                <button onClick={this.onMore}>
+                  SHOW MORE
+                </button>
+                <button onClick={this.showAll}>
+                  SHOW ALL
+                </button>
+              </>
           }
       </div>
     );
