@@ -6,7 +6,7 @@ class App extends Component {
 state = {
     products: [],
     page: 1,
-    size: 8,
+    size: 10,
     length: 0
   };
 

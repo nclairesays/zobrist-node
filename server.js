@@ -18,7 +18,7 @@ app.get('/api/products', (req, res) => {
         })
     } else  {
         console.log('SEND ALL')
-        res.send({ 
+        res.send({
             products: products,
             length: products.length
          })
